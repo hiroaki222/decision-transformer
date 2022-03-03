@@ -2,7 +2,7 @@ import gym
 import numpy as np
 import torch
 import wandb
-
+import os
 import argparse
 import pickle
 import random
@@ -276,6 +276,8 @@ def experiment(
 
     for iter in range(variant['max_iters']):
         outputs = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
+        os.makedirs(f"checkpoints/{env_name}/{dataset}/", exist_ok=True)
+        torch.save(model.state_dict(), f"checkpoints/{env_name}/{dataset}/{iter}.pth")
         if log_to_wandb:
             wandb.log(outputs)
 
