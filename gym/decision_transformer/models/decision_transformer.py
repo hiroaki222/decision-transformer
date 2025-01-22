@@ -62,12 +62,14 @@ class DecisionTransformer(TrajectoryModel):
     def forward(
         self, states, actions, rewards, returns_to_go, timesteps, attention_mask=None
     ):
-
         batch_size, seq_length = states.shape[0], states.shape[1]
 
         if attention_mask is None:
             # attention mask for GPT: 1 if can be attended to, 0 if not
             attention_mask = torch.ones((batch_size, seq_length), dtype=torch.long)
+
+        # Move attention_mask to the same device as the model
+        attention_mask = attention_mask.to(states.device)
 
         # embed each modality with a different head
         state_embeddings = self.embed_state(states)
